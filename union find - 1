@@ -1,0 +1,45 @@
+class Solution {
+public:
+    unordered_map<int,int>mpp,par;
+    int findd(int n){
+        if(par[n]==n)return n;
+        return par[n] = findd(par[n]);
+    }
+    void unionn(int u,int v){
+        int x = findd(u);
+        int y = findd(v);
+        if(x==y)return ;
+        if(mpp[x]>=mpp[y]){
+            mpp[x]+=mpp[y];
+            par[y] = x;
+        }
+        else{
+            mpp[y]+=mpp[x];
+            par[x] = y;
+        }
+    }
+    int longestConsecutive(vector<int>& nums) {
+        int n = nums.size();
+        for(int i=0;i<n;i++){
+            mpp[nums[i]]=1;
+            par[nums[i]] = nums[i];
+        }
+        for(int i=0;i<n;i++){
+            int x =1e6+1;
+            int y =1e6+1;
+            if(mpp.find(nums[i]-1)!=mpp.end()){
+                x = findd(nums[i]-1);
+            }
+            if(mpp.find(nums[i]+1)!=mpp.end()){
+                y = findd(nums[i]+1);
+            }
+            if(x!=1e6+1)unionn(x,nums[i]);
+            if(y!=1e6+1)unionn(y,nums[i]);
+        }
+        int c=0;
+        for(auto it : mpp){
+            c = max(c,it.second);
+        }
+        return c;
+    }
+};
